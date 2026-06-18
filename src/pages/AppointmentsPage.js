@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
-
+ 
 function AppointmentsPage() {
   const [appointments, setAppointments] = useState([]);
   const [doctors, setDoctors] = useState([]);
@@ -9,7 +9,7 @@ function AppointmentsPage() {
   const [patientId, setPatientId] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
-
+ 
   const fetchAll = async () => {
     try {
       const [aRes, dRes, pRes] = await Promise.all([
@@ -22,9 +22,9 @@ function AppointmentsPage() {
       setPatients(pRes.data);
     } catch { alert('Could not load data'); }
   };
-
+ 
   useEffect(() => { fetchAll(); }, []);
-
+ 
   const handleAdd = async () => {
     if (!doctorId || !patientId || !date || !time)
       return alert('Please fill all fields');
@@ -39,20 +39,20 @@ function AppointmentsPage() {
       fetchAll();
     } catch { alert('Could not book appointment'); }
   };
-
+ 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this appointment?')) return;
     try { await api.delete(`/appointments/${id}`); fetchAll(); }
     catch { alert('Could not delete'); }
   };
-
-const handleStatusChange = async (id, newStatus) => {
+ 
+  const handleStatusChange = async (id, newStatus) => {
     try {
       await api.put(`/appointments/${id}/status`, { status: newStatus });
       fetchAll();
     } catch { alert('Could not update status'); }
   };
-
+ 
   return (
     <div className="page">
       <div className="page-header">
@@ -62,7 +62,7 @@ const handleStatusChange = async (id, newStatus) => {
           <p>Book and manage all appointments</p>
         </div>
       </div>
-
+ 
       <div className="card">
         <div className="card-header"><h3>Book New Appointment</h3></div>
         <div className="card-body">
@@ -81,7 +81,7 @@ const handleStatusChange = async (id, newStatus) => {
           <button className="btn btn-blue" onClick={handleAdd}>+ Book Appointment</button>
         </div>
       </div>
-
+ 
       <div className="card">
         <div className="card-header"><h3>All Appointments</h3></div>
         <div className="table-wrap">
@@ -116,7 +116,6 @@ const handleStatusChange = async (id, newStatus) => {
                     <td><span className="table-date">{a.appointment_date}</span></td>
                     <td><span className="table-time">{a.appointment_time}</span></td>
                     <td>
-                      <td>
                       <span className={`badge ${
                         a.status === 'Pending' ? 'badge-pending' :
                         a.status === 'Confirmed' ? 'badge-confirmed' : 'badge-done'
@@ -127,7 +126,7 @@ const handleStatusChange = async (id, newStatus) => {
                     <td>
                       <select
                         className="form-input"
-                        style={{width:'140px', padding:'4px 8px', fontSize:'13px'}}
+                        style={{width:'130px', padding:'4px', fontSize:'13px'}}
                         value={a.status}
                         onChange={e => handleStatusChange(a.id, e.target.value)}
                       >
@@ -148,5 +147,5 @@ const handleStatusChange = async (id, newStatus) => {
     </div>
   );
 }
-
+ 
 export default AppointmentsPage;

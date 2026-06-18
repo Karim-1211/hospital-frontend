@@ -46,6 +46,13 @@ function AppointmentsPage() {
     catch { alert('Could not delete'); }
   };
 
+const handleStatusChange = async (id, newStatus) => {
+    try {
+      await api.put(`/appointments/${id}/status`, { status: newStatus });
+      fetchAll();
+    } catch { alert('Could not update status'); }
+  };
+
   return (
     <div className="page">
       <div className="page-header">
@@ -109,12 +116,27 @@ function AppointmentsPage() {
                     <td><span className="table-date">{a.appointment_date}</span></td>
                     <td><span className="table-time">{a.appointment_time}</span></td>
                     <td>
-                      <span className={`badge ${a.status === 'Pending' ? 'badge-pending' : 'badge-done'}`}>
+                      <td>
+                      <span className={`badge ${
+                        a.status === 'Pending' ? 'badge-pending' :
+                        a.status === 'Confirmed' ? 'badge-confirmed' : 'badge-done'
+                      }`}>
                         {a.status}
                       </span>
                     </td>
                     <td>
-                      <button className="btn btn-red btn-sm" onClick={() => handleDelete(a.id)}>Delete</button>
+                      <select
+                        className="form-input"
+                        style={{width:'140px', padding:'4px 8px', fontSize:'13px'}}
+                        value={a.status}
+                        onChange={e => handleStatusChange(a.id, e.target.value)}
+                      >
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                      </select>
+                      <button className="btn btn-red btn-sm" style={{marginLeft:'6px'}} onClick={() => handleDelete(a.id)}>Delete</button>
                     </td>
                   </tr>
                 ))}
